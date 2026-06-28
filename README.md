@@ -4,7 +4,7 @@ AI-assisted capillary transport stability analysis for lunar water recycling sys
 
 LunarCap AI is an interactive engineering dashboard that predicts whether capillary-driven transport through porous media is likely to be stable, marginal, or high risk under different operating conditions.
 
-The app uses simplified physics-based calculations, dynamic surface tension estimates, AI-style engineering reasoning, feature importance, and sensitivity analysis to support early-stage design exploration.
+The interface uses a dark aerospace-inspired visual system with soft scientific colors, engineering-style cards, native charts, and concise AI-style reasoning.
 
 ## Overview
 
@@ -34,6 +34,7 @@ The goal is to make capillary transport behavior easier to understand, compare, 
 - Native Streamlit pressure vs radius chart
 - Engineering recommendations
 - Sensitivity analysis
+- Dark professional engineering dashboard UI
 
 ## Inputs
 
