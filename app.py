@@ -2,7 +2,6 @@ import math
 import numpy as np
 import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
 
 
 # ============================================================
@@ -24,92 +23,218 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-        .main {
-            background-color: #f7f9fc;
+        :root {
+            --bg: #f4f7fb;
+            --panel: #ffffff;
+            --ink: #172033;
+            --muted: #667085;
+            --line: #d9e2ef;
+            --blue: #2563eb;
+            --cyan: #0891b2;
+            --green: #16833a;
+            --amber: #b76e00;
+            --red: #b42318;
+        }
+
+        html, body, [class*="css"] {
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .stApp {
+            background: var(--bg);
+            color: var(--ink);
         }
 
         .block-container {
             padding-top: 2rem;
-            padding-bottom: 2rem;
+            padding-bottom: 3rem;
+            max-width: 1240px;
         }
 
-        .app-title {
-            font-size: 2.4rem;
-            font-weight: 800;
-            color: #102033;
-            margin-bottom: 0.2rem;
+        section[data-testid="stSidebar"] {
+            background: #111827;
+            border-right: 1px solid rgba(255,255,255,0.08);
         }
 
-        .app-subtitle {
-            font-size: 1rem;
-            color: #5f6f82;
-            margin-bottom: 1.8rem;
+        section[data-testid="stSidebar"] * {
+            color: #f9fafb;
         }
 
-        .result-card {
-            background: white;
-            border: 1px solid #dfe7f1;
+        section[data-testid="stSidebar"] .stSlider label {
+            color: #f9fafb !important;
+            font-weight: 650;
+        }
+
+        section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+            color: #cbd5e1;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #ffffff 0%, #eef6ff 58%, #e7fbff 100%);
+            border: 1px solid var(--line);
             border-radius: 8px;
-            padding: 1.2rem;
-            height: 100%;
-            box-shadow: 0 1px 4px rgba(16, 32, 51, 0.06);
+            padding: 1.5rem 1.6rem;
+            margin-bottom: 1.1rem;
         }
 
-        .result-label {
+        .eyebrow {
             font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: #6b7a90;
-            font-weight: 700;
-            margin-bottom: 0.4rem;
-        }
-
-        .result-value {
-            font-size: 1.75rem;
             font-weight: 800;
-            color: #102033;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--cyan);
+            margin-bottom: 0.35rem;
         }
 
-        .result-note {
-            font-size: 0.88rem;
-            color: #65758a;
-            margin-top: 0.35rem;
+        .hero-title {
+            font-size: 2.25rem;
+            line-height: 1.05;
+            font-weight: 850;
+            color: var(--ink);
+            margin: 0;
         }
 
-        .section-card {
-            background: white;
-            border: 1px solid #dfe7f1;
-            border-radius: 8px;
-            padding: 1.25rem;
-            box-shadow: 0 1px 4px rgba(16, 32, 51, 0.05);
-            margin-bottom: 1rem;
+        .hero-copy {
+            max-width: 760px;
+            margin-top: 0.65rem;
+            font-size: 1rem;
+            line-height: 1.55;
+            color: var(--muted);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 0.36rem 0.72rem;
+            font-size: 0.82rem;
+            font-weight: 800;
+            margin-top: 0.85rem;
+            border: 1px solid transparent;
         }
 
         .status-stable {
-            color: #137333;
-            font-weight: 800;
+            background: #e9f8ef;
+            color: var(--green);
+            border-color: #b9e6c8;
         }
 
         .status-marginal {
-            color: #b06000;
-            font-weight: 800;
+            background: #fff5df;
+            color: var(--amber);
+            border-color: #f4d18a;
         }
 
         .status-risk {
-            color: #b3261e;
-            font-weight: 800;
+            background: #fff0ed;
+            color: var(--red);
+            border-color: #f2b8b0;
         }
 
-        .recommendation-box {
-            background: #eef6ff;
-            border: 1px solid #c9def5;
+        .metric-card {
+            background: #ffffff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 1rem 1rem 0.95rem;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+            min-height: 122px;
+        }
+
+        .metric-label {
+            color: var(--muted);
+            font-size: 0.74rem;
+            font-weight: 850;
+            letter-spacing: 0.075em;
+            text-transform: uppercase;
+            margin-bottom: 0.42rem;
+        }
+
+        .metric-value {
+            color: var(--ink);
+            font-size: 1.75rem;
+            font-weight: 850;
+            line-height: 1.1;
+        }
+
+        .metric-note {
+            color: var(--muted);
+            font-size: 0.86rem;
+            margin-top: 0.55rem;
+            line-height: 1.35;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 820;
+            color: var(--ink);
+            margin-bottom: 0.2rem;
+        }
+
+        .section-kicker {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .summary-text {
+            font-size: 0.98rem;
+            line-height: 1.68;
+            color: #243044;
+        }
+
+        .recommendation {
+            background: #f0f7ff;
+            border: 1px solid #c8def7;
             border-radius: 8px;
             padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .recommendation ul {
+            margin-bottom: 0.4rem;
         }
 
         .small-muted {
-            color: #6b7a90;
-            font-size: 0.9rem;
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
+
+        .health-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            border-bottom: 1px solid #edf1f7;
+            padding: 0.58rem 0;
+        }
+
+        .health-row:last-child {
+            border-bottom: none;
+        }
+
+        .health-label {
+            color: var(--muted);
+        }
+
+        .health-value {
+            color: var(--ink);
+            font-weight: 760;
+            text-align: right;
+        }
+
+        div[data-testid="stVerticalBlockBorderWrapper"] {
+            border-color: var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        }
+
+        .stProgress > div > div > div > div {
+            background-color: var(--blue);
+        }
+
+        button[kind="primary"] {
+            border-radius: 8px;
+            font-weight: 750;
         }
     </style>
     """,
@@ -124,10 +249,7 @@ st.markdown(
 def surface_tension_water(temp_c: float) -> float:
     """
     Estimate water surface tension in N/m as a function of temperature.
-
-    Uses a practical engineering approximation around water behavior.
-    The value is clamped to avoid nonphysical results across the wide
-    demonstration range from -180 C to +180 C.
+    This is a simplified engineering approximation for demo use.
     """
     gamma_20c = 0.0728
     slope = -0.000155
@@ -137,8 +259,7 @@ def surface_tension_water(temp_c: float) -> float:
 
 def capillary_pressure(radius_m: float, contact_angle_deg: float, gamma: float) -> float:
     """
-    Young-Laplace capillary pressure.
-
+    Young-Laplace capillary pressure:
     Delta P = 2 * gamma * cos(theta) / r
     """
     theta_rad = math.radians(contact_angle_deg)
@@ -146,9 +267,6 @@ def capillary_pressure(radius_m: float, contact_angle_deg: float, gamma: float) 
 
 
 def calculate_stability_score(capillary_pressure_pa: float, flow_demand_pa: float) -> float:
-    """
-    Converts pressure margin into a 0-100 stability score.
-    """
     if flow_demand_pa <= 0:
         return 100.0
 
@@ -162,10 +280,6 @@ def calculate_stability_score(capillary_pressure_pa: float, flow_demand_pa: floa
 
 
 def calculate_confidence_score(stability_score: float, pressure_ratio: float) -> float:
-    """
-    Estimates model confidence from prediction strength.
-    Very low or very high stability states are easier to classify.
-    """
     distance_from_boundary = abs(stability_score - 50.0)
     ratio_strength = min(pressure_ratio / 3.0, 1.0)
     confidence = 55.0 + (distance_from_boundary * 0.6) + (ratio_strength * 18.0)
@@ -182,12 +296,12 @@ def classify_system(stability_score: float) -> str:
 
 def health_rating(stability_score: float) -> tuple[str, str]:
     if stability_score >= 90:
-        return "Excellent", "*****"
+        return "Excellent", "5/5"
     if stability_score >= 75:
-        return "Good", "****"
+        return "Good", "4/5"
     if stability_score >= 55:
-        return "Marginal", "***"
-    return "High Risk", "**"
+        return "Marginal", "3/5"
+    return "High Risk", "2/5"
 
 
 # ============================================================
@@ -215,7 +329,7 @@ def build_engineering_summary(
     if temp_c > 100:
         temp_comment = "Elevated temperature reduces surface tension and weakens capillary driving force."
     elif temp_c < -50:
-        temp_comment = "Low temperature increases estimated surface tension, which improves capillary pressure in this model."
+        temp_comment = "Low temperature increases estimated surface tension, improving capillary pressure in this model."
     else:
         temp_comment = "Temperature has a secondary influence through its effect on surface tension."
 
@@ -239,13 +353,13 @@ def build_ai_reasoning(
     temp_c: float,
 ) -> str:
     return f"""
-The capillary pressure is calculated using the Young-Laplace equation:
+The model uses the Young-Laplace equation:
 
 Delta P = 2 * gamma * cos(theta) / r
 
-where gamma is surface tension, theta is contact angle, and r is pore radius.
+Where gamma is surface tension, theta is contact angle, and r is pore radius.
 
-For this case:
+For the current design:
 
 - Surface tension: {gamma:.4f} N/m
 - Pore radius: {radius_um:.2f} micrometers
@@ -254,19 +368,23 @@ For this case:
 - Capillary pressure: {cap_pressure:,.0f} Pa
 - Flow demand: {flow_demand:,.0f} Pa
 - Pressure ratio: {pressure_ratio:.2f}
+- Stability score: {stability_score:.1f}/100
 
-The stability score is derived from the pressure ratio. A ratio above 1.0 means the
-available capillary pressure exceeds the required hydraulic demand. Larger ratios
-produce stronger stability predictions.
+A pressure ratio above 1.0 means capillary pressure exceeds hydraulic demand.
+Higher ratios indicate more design margin and therefore stronger transport stability.
 
-The most influential variables are pore radius and flow demand because they directly
-control the pressure margin. Contact angle affects the cosine term in the Young-Laplace
-equation. Temperature affects the prediction indirectly by changing the estimated
-surface tension.
+The variables with the strongest influence are usually pore radius and flow demand.
+Contact angle controls wettability through the cosine term. Temperature affects the
+result indirectly by changing estimated surface tension.
 """
 
 
-def feature_importance(radius_um: float, flow_demand: float, contact_angle: float, temp_c: float) -> pd.DataFrame:
+def feature_importance(
+    radius_um: float,
+    flow_demand: float,
+    contact_angle: float,
+    temp_c: float,
+) -> pd.DataFrame:
     radius_weight = min(55, 25 + radius_um * 0.35)
     flow_weight = min(45, 18 + flow_demand / 900)
     angle_weight = min(35, 8 + contact_angle * 0.22)
@@ -274,17 +392,17 @@ def feature_importance(radius_um: float, flow_demand: float, contact_angle: floa
 
     total = radius_weight + flow_weight + angle_weight + temp_weight
 
-    data = {
-        "Feature": ["Radius", "Flow Demand", "Contact Angle", "Temperature"],
-        "Importance": [
-            radius_weight / total * 100,
-            flow_weight / total * 100,
-            angle_weight / total * 100,
-            temp_weight / total * 100,
-        ],
-    }
+    rows = [
+        ("Radius", radius_weight / total * 100),
+        ("Flow Demand", flow_weight / total * 100),
+        ("Contact Angle", angle_weight / total * 100),
+        ("Temperature", temp_weight / total * 100),
+    ]
 
-    return pd.DataFrame(data).sort_values("Importance", ascending=False)
+    return pd.DataFrame(rows, columns=["Feature", "Importance"]).sort_values(
+        "Importance",
+        ascending=False,
+    )
 
 
 def recommendation_engine(
@@ -313,7 +431,7 @@ def recommendation_engine(
         improvement += 10.0
 
     if not recommendations:
-        recommendations.append("Maintain current operating window")
+        recommendations.append("Maintain the current operating window")
         improvement = 3.0
 
     return recommendations, improvement
@@ -330,44 +448,33 @@ def run_sensitivity_analysis(
     baseline_score = calculate_stability_score(baseline_pressure, flow_demand)
 
     rows = []
+    parameters = ["Radius", "Contact Angle", "Flow Demand", "Temperature"]
 
-    parameters = {
-        "Radius": radius_um,
-        "Contact Angle": contact_angle,
-        "Flow Demand": flow_demand,
-        "Temperature": temp_c,
-    }
-
-    for name, value in parameters.items():
-        low_value = value * 0.8
-        high_value = value * 1.2
-
-        if name == "Temperature":
-            low_value = temp_c - 20
-            high_value = temp_c + 20
-
+    for name in parameters:
         low_radius = radius_um
-        low_angle = contact_angle
-        low_demand = flow_demand
-        low_temp = temp_c
-
         high_radius = radius_um
+        low_angle = contact_angle
         high_angle = contact_angle
+        low_demand = flow_demand
         high_demand = flow_demand
+        low_temp = temp_c
         high_temp = temp_c
 
         if name == "Radius":
-            low_radius = max(low_value, 1)
-            high_radius = max(high_value, 1)
+            low_radius = max(radius_um * 0.8, 1)
+            high_radius = max(radius_um * 1.2, 1)
+
         elif name == "Contact Angle":
-            low_angle = float(np.clip(low_value, 0, 89))
-            high_angle = float(np.clip(high_value, 0, 89))
+            low_angle = float(np.clip(contact_angle * 0.8, 0, 89))
+            high_angle = float(np.clip(contact_angle * 1.2, 0, 89))
+
         elif name == "Flow Demand":
-            low_demand = max(low_value, 1)
-            high_demand = max(high_value, 1)
+            low_demand = max(flow_demand * 0.8, 1)
+            high_demand = max(flow_demand * 1.2, 1)
+
         elif name == "Temperature":
-            low_temp = float(np.clip(low_value, -180, 180))
-            high_temp = float(np.clip(high_value, -180, 180))
+            low_temp = float(np.clip(temp_c - 20, -180, 180))
+            high_temp = float(np.clip(temp_c + 20, -180, 180))
 
         low_gamma = surface_tension_water(low_temp)
         high_gamma = surface_tension_water(high_temp)
@@ -393,14 +500,34 @@ def run_sensitivity_analysis(
     return pd.DataFrame(rows).sort_values("Max Score Change", ascending=False)
 
 
+def status_css_class(status: str) -> str:
+    if status == "Stable":
+        return "status-stable"
+    if status == "Marginal":
+        return "status-marginal"
+    return "status-risk"
+
+
+def render_metric_card(label: str, value: str, note: str) -> None:
+    st.markdown(
+        f"""
+        <div class="metric-card">
+            <div class="metric-label">{label}</div>
+            <div class="metric-value">{value}</div>
+            <div class="metric-note">{note}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 # ============================================================
 # Sidebar
 # ============================================================
 
 st.sidebar.title("LunarCap AI")
 st.sidebar.caption("Capillary transport stability predictor")
-
-st.sidebar.markdown("---")
+st.sidebar.divider()
 
 radius_um = st.sidebar.slider(
     "Pore Radius (micrometers)",
@@ -434,189 +561,231 @@ temperature_c = st.sidebar.slider(
     step=5.0,
 )
 
-st.sidebar.markdown("---")
-st.sidebar.caption("Model: Young-Laplace + engineering stability scoring")
+st.sidebar.divider()
+st.sidebar.caption("Model: Young-Laplace equation with simplified stability scoring.")
 
 
 # ============================================================
-# Inputs and Calculations
+# Calculations
 # ============================================================
 
 radius_m = radius_um * 1e-6
 gamma = surface_tension_water(temperature_c)
 cap_pressure = capillary_pressure(radius_m, contact_angle, gamma)
-pressure_ratio = cap_pressure / flow_demand if flow_demand > 0 else 999
+pressure_ratio = cap_pressure / flow_demand if flow_demand > 0 else 999.0
 stability_score = calculate_stability_score(cap_pressure, flow_demand)
 confidence_score = calculate_confidence_score(stability_score, pressure_ratio)
 system_status = classify_system(stability_score)
-rating_label, rating_stars = health_rating(stability_score)
+rating_label, rating_score = health_rating(stability_score)
 
-status_class = "status-stable"
-if system_status == "Marginal":
-    status_class = "status-marginal"
-elif system_status == "High Risk":
-    status_class = "status-risk"
+summary = build_engineering_summary(
+    system_status,
+    confidence_score,
+    cap_pressure,
+    flow_demand,
+    pressure_ratio,
+    radius_um,
+    contact_angle,
+    temperature_c,
+)
+
+recommendations, predicted_improvement = recommendation_engine(
+    stability_score,
+    radius_um,
+    contact_angle,
+    flow_demand,
+)
 
 
 # ============================================================
 # Header
 # ============================================================
 
-st.markdown('<div class="app-title">LunarCap AI</div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="app-subtitle">AI-assisted capillary transport stability analysis for lunar water recycling systems.</div>',
+    f"""
+    <div class="hero">
+        <div class="eyebrow">Capillary Transport Analysis</div>
+        <h1 class="hero-title">LunarCap AI</h1>
+        <div class="hero-copy">
+            A clean engineering dashboard for estimating capillary transport stability
+            in porous media used for lunar water recycling concepts.
+        </div>
+        <div class="status-pill {status_css_class(system_status)}">
+            Current System Status: {system_status}
+        </div>
+    </div>
+    """,
     unsafe_allow_html=True,
 )
 
 
 # ============================================================
-# Result Cards
+# Primary Metrics
 # ============================================================
 
-col1, col2, col3, col4 = st.columns(4)
+metric_cols = st.columns(4)
 
-with col1:
-    st.markdown(
-        f"""
-        <div class="result-card">
-            <div class="result-label">Capillary Pressure</div>
-            <div class="result-value">{cap_pressure:,.0f} Pa</div>
-            <div class="result-note">Young-Laplace prediction</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
+with metric_cols[0]:
+    render_metric_card(
+        "Stability Score",
+        f"{stability_score:.0f}/100",
+        f"Health rating: {rating_label}",
     )
 
-with col2:
-    st.markdown(
-        f"""
-        <div class="result-card">
-            <div class="result-label">Stability Score</div>
-            <div class="result-value">{stability_score:.0f}/100</div>
-            <div class="result-note">Pressure margin based</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
+with metric_cols[1]:
+    render_metric_card(
+        "Capillary Pressure",
+        f"{cap_pressure:,.0f} Pa",
+        "Young-Laplace prediction",
     )
 
-with col3:
-    st.markdown(
-        f"""
-        <div class="result-card">
-            <div class="result-label">Confidence Score</div>
-            <div class="result-value">{confidence_score:.0f}%</div>
-            <div class="result-note">Classification confidence</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
+with metric_cols[2]:
+    render_metric_card(
+        "Pressure Ratio",
+        f"{pressure_ratio:.2f}x",
+        "Capillary pressure divided by flow demand",
     )
 
-with col4:
-    st.markdown(
-        f"""
-        <div class="result-card">
-            <div class="result-label">System Status</div>
-            <div class="result-value {status_class}">{system_status}</div>
-            <div class="result-note">{rating_stars} {rating_label}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
+with metric_cols[3]:
+    render_metric_card(
+        "Confidence",
+        f"{confidence_score:.0f}%",
+        "Classification confidence estimate",
     )
 
-
-# ============================================================
-# Main Layout
-# ============================================================
-
-left_col, right_col = st.columns([1.45, 1.0])
+st.write("")
 
 
 # ============================================================
-# Visualization
+# Main Analysis
 # ============================================================
+
+left_col, right_col = st.columns([1.45, 1.0], gap="large")
 
 with left_col:
-    st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.subheader("Pressure vs Radius")
+    with st.container(border=True):
+        st.markdown('<div class="section-title">Pressure vs Radius</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="section-kicker">Native Streamlit chart showing how capillary pressure changes as pore radius increases.</div>',
+            unsafe_allow_html=True,
+        )
 
-    radius_range_um = np.linspace(1, 150, 250)
-    pressure_values = [
-        capillary_pressure(r * 1e-6, contact_angle, gamma)
-        for r in radius_range_um
-    ]
+        radius_range_um = np.linspace(1, 150, 180)
+        pressure_values = [
+            capillary_pressure(r * 1e-6, contact_angle, gamma)
+            for r in radius_range_um
+        ]
 
-    fig, ax = plt.subplots(figsize=(8, 4.5))
-    ax.plot(radius_range_um, pressure_values, linewidth=2.5, color="#1f77b4")
-    ax.axhline(flow_demand, linestyle="--", linewidth=2, color="#d62728", label="Flow Demand")
-    ax.scatter([radius_um], [cap_pressure], color="#102033", s=70, zorder=5, label="Current Design")
+        chart_df = pd.DataFrame(
+            {
+                "Radius (micrometers)": radius_range_um,
+                "Capillary Pressure": pressure_values,
+                "Flow Demand": [flow_demand] * len(radius_range_um),
+            }
+        )
 
-    ax.set_title("Capillary Pressure Response to Pore Radius", fontsize=13, weight="bold")
-    ax.set_xlabel("Pore Radius (micrometers)")
-    ax.set_ylabel("Capillary Pressure (Pa)")
-    ax.grid(True, alpha=0.25)
-    ax.legend()
+        st.line_chart(
+            chart_df,
+            x="Radius (micrometers)",
+            y=["Capillary Pressure", "Flow Demand"],
+            height=360,
+            use_container_width=True,
+        )
 
-    st.pyplot(fig, use_container_width=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.subheader("Feature Importance")
-
-    importance_df = feature_importance(radius_um, flow_demand, contact_angle, temperature_c)
-
-    for _, row in importance_df.iterrows():
-        value = row["Importance"]
-        st.write(f"**{row['Feature']}**")
-        st.progress(value / 100)
-        st.caption(f"{value:.0f}% contribution")
-
-    st.markdown("</div>", unsafe_allow_html=True)
-
-
-# ============================================================
-# Engineering Summary and Recommendations
-# ============================================================
+        st.caption(
+            f"Current design point: {radius_um:.1f} micrometers, "
+            f"{cap_pressure:,.0f} Pa capillary pressure."
+        )
 
 with right_col:
-    st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.subheader("AI Engineering Summary")
+    with st.container(border=True):
+        st.markdown('<div class="section-title">AI Engineering Summary</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="section-kicker">Plain-language interpretation of the current operating condition.</div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(f'<div class="summary-text">{summary}</div>', unsafe_allow_html=True)
 
-    summary = build_engineering_summary(
-        system_status,
-        confidence_score,
-        cap_pressure,
-        flow_demand,
-        pressure_ratio,
-        radius_um,
-        contact_angle,
-        temperature_c,
+    with st.container(border=True):
+        st.markdown('<div class="section-title">Engineering Snapshot</div>', unsafe_allow_html=True)
+
+        rows = [
+            ("System Status", system_status),
+            ("Health Rating", f"{rating_label} ({rating_score})"),
+            ("Surface Tension", f"{gamma:.4f} N/m"),
+            ("Flow Demand", f"{flow_demand:,.0f} Pa"),
+            ("Temperature", f"{temperature_c:.1f} C"),
+        ]
+
+        for label, value in rows:
+            st.markdown(
+                f"""
+                <div class="health-row">
+                    <div class="health-label">{label}</div>
+                    <div class="health-value">{value}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+
+# ============================================================
+# Decision Support
+# ============================================================
+
+st.write("")
+support_left, support_right = st.columns([1.0, 1.0], gap="large")
+
+with support_left:
+    with st.container(border=True):
+        st.markdown('<div class="section-title">Engineering Recommendation</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="section-kicker">Suggested design actions based on the current prediction.</div>',
+            unsafe_allow_html=True,
+        )
+
+        st.markdown('<div class="recommendation">', unsafe_allow_html=True)
+        for item in recommendations:
+            st.write(f"- {item}")
+
+        st.markdown(
+            f"**Predicted improvement:** +{predicted_improvement:.0f}% stability"
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+with support_right:
+    with st.container(border=True):
+        st.markdown('<div class="section-title">Feature Importance</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="section-kicker">Estimated contribution of each input to the prediction.</div>',
+            unsafe_allow_html=True,
+        )
+
+        importance_df = feature_importance(
+            radius_um,
+            flow_demand,
+            contact_angle,
+            temperature_c,
+        )
+
+        for _, row in importance_df.iterrows():
+            importance = row["Importance"]
+            st.write(f"**{row['Feature']}**")
+            st.progress(importance / 100)
+            st.caption(f"{importance:.0f}% contribution")
+
+
+# ============================================================
+# Operating Conditions
+# ============================================================
+
+st.write("")
+with st.container(border=True):
+    st.markdown('<div class="section-title">Operating Conditions</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-kicker">Current input values and derived model terms.</div>',
+        unsafe_allow_html=True,
     )
-
-    st.write(summary)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.subheader("Engineering Recommendation")
-
-    recommendations, predicted_improvement = recommendation_engine(
-        stability_score,
-        radius_um,
-        contact_angle,
-        flow_demand,
-    )
-
-    st.markdown('<div class="recommendation-box">', unsafe_allow_html=True)
-
-    for item in recommendations:
-        st.write(f"- {item}")
-
-    st.write(f"**Predicted improvement:** +{predicted_improvement:.0f}% stability")
-
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.subheader("Operating Conditions")
 
     operating_df = pd.DataFrame(
         {
@@ -626,7 +795,10 @@ with right_col:
                 "Flow Demand",
                 "Temperature",
                 "Surface Tension",
+                "Capillary Pressure",
                 "Pressure Ratio",
+                "Stability Score",
+                "Confidence Score",
             ],
             "Value": [
                 f"{radius_um:.1f} micrometers",
@@ -634,77 +806,86 @@ with right_col:
                 f"{flow_demand:,.0f} Pa",
                 f"{temperature_c:.1f} C",
                 f"{gamma:.4f} N/m",
-                f"{pressure_ratio:.2f}",
+                f"{cap_pressure:,.0f} Pa",
+                f"{pressure_ratio:.2f}x",
+                f"{stability_score:.1f}/100",
+                f"{confidence_score:.1f}%",
             ],
         }
     )
 
-    st.dataframe(operating_df, hide_index=True, use_container_width=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-
-# ============================================================
-# AI Explanation
-# ============================================================
-
-st.markdown('<div class="section-card">', unsafe_allow_html=True)
-with st.expander("Expandable AI Reasoning"):
-    st.write(
-        build_ai_reasoning(
-            cap_pressure,
-            flow_demand,
-            pressure_ratio,
-            stability_score,
-            gamma,
-            radius_um,
-            contact_angle,
-            temperature_c,
-        )
+    st.dataframe(
+        operating_df,
+        hide_index=True,
+        use_container_width=True,
     )
-st.markdown("</div>", unsafe_allow_html=True)
 
 
 # ============================================================
 # Sensitivity Analysis
 # ============================================================
 
-st.markdown('<div class="section-card">', unsafe_allow_html=True)
-st.subheader("Sensitivity Analysis")
-
-run_analysis = st.button("Run Sensitivity Analysis")
-
-if run_analysis:
-    sensitivity_df = run_sensitivity_analysis(
-        radius_um,
-        contact_angle,
-        flow_demand,
-        temperature_c,
+st.write("")
+with st.container(border=True):
+    st.markdown('<div class="section-title">Sensitivity Analysis</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-kicker">Perturbs each input and ranks which variable has the strongest effect on stability.</div>',
+        unsafe_allow_html=True,
     )
 
-    st.dataframe(
-        sensitivity_df.style.format(
-            {
-                "Baseline Score": "{:.1f}",
-                "Low Case Score": "{:.1f}",
-                "High Case Score": "{:.1f}",
-                "Max Score Change": "{:.1f}",
-            }
-        ),
-        use_container_width=True,
-        hide_index=True,
-    )
+    run_analysis = st.button("Run Sensitivity Analysis", type="primary")
 
-    top_parameter = sensitivity_df.iloc[0]["Parameter"]
-    top_change = sensitivity_df.iloc[0]["Max Score Change"]
+    if run_analysis:
+        sensitivity_df = run_sensitivity_analysis(
+            radius_um,
+            contact_angle,
+            flow_demand,
+            temperature_c,
+        )
 
-    st.info(
-        f"The strongest sensitivity is currently {top_parameter}, "
-        f"which can shift the stability score by up to {top_change:.1f} points."
-    )
-else:
-    st.caption("Click the button to perturb each input and rank its effect on stability.")
+        st.dataframe(
+            sensitivity_df.style.format(
+                {
+                    "Baseline Score": "{:.1f}",
+                    "Low Case Score": "{:.1f}",
+                    "High Case Score": "{:.1f}",
+                    "Max Score Change": "{:.1f}",
+                }
+            ),
+            hide_index=True,
+            use_container_width=True,
+        )
 
-st.markdown("</div>", unsafe_allow_html=True)
+        top_parameter = sensitivity_df.iloc[0]["Parameter"]
+        top_change = sensitivity_df.iloc[0]["Max Score Change"]
+
+        st.info(
+            f"The strongest sensitivity is currently {top_parameter}, "
+            f"which can shift the stability score by up to {top_change:.1f} points."
+        )
+    else:
+        st.caption("Click the button to test how much each input affects the stability score.")
+
+
+# ============================================================
+# Technical Reasoning
+# ============================================================
+
+st.write("")
+with st.container(border=True):
+    with st.expander("Technical AI Reasoning"):
+        st.write(
+            build_ai_reasoning(
+                cap_pressure,
+                flow_demand,
+                pressure_ratio,
+                stability_score,
+                gamma,
+                radius_um,
+                contact_angle,
+                temperature_c,
+            )
+        )
 
 
 # ============================================================
@@ -712,6 +893,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 # ============================================================
 
 st.caption(
-    "LunarCap AI uses simplified engineering equations for demonstration and early-stage design screening. "
-    "Results should be validated with experimental or mission-specific data before operational use."
+    "LunarCap AI uses simplified engineering equations for educational demonstration "
+    "and early-stage design screening. Results should be validated with experimental "
+    "or mission-specific data before operational use."
 )
