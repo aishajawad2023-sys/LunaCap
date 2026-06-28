@@ -1,11 +1,23 @@
 # 🌙 LunarCap AI
-The app uses simplified physics-based calculations and rule-based engineering reasoning to estimate whether a capillary transport design is stable, marginal, or high risk under different operating conditions.
+
+AI-assisted capillary transport stability analysis for lunar water recycling systems.
+
+LunarCap AI is an interactive engineering dashboard that predicts whether capillary-driven transport through porous media is likely to be stable, marginal, or high risk under different operating conditions.
+
+The app uses simplified physics-based calculations, dynamic surface tension estimates, AI-style engineering reasoning, feature importance, and sensitivity analysis to support early-stage design exploration.
 
 ## Overview
 
-Lunar water recycling systems may rely on porous media and capillary-driven transport to move fluids in low-gravity environments. This application provides an interactive way to explore how pore radius, contact angle, flow demand, and temperature influence capillary pressure and transport stability.
+Future lunar water recycling systems may rely on porous materials and capillary-driven flow to transport fluids in low-gravity environments.
 
-The model is designed as an educational and early-stage engineering demonstration, not as a certified mission simulation.
+LunarCap AI provides a simple, visual way to explore how key design variables affect capillary transport performance:
+
+- Pore radius
+- Contact angle
+- Flow demand
+- Temperature
+
+The goal is to make capillary transport behavior easier to understand, compare, and explain.
 
 ## Features
 
@@ -17,53 +29,24 @@ The model is designed as an educational and early-stage engineering demonstratio
 - System status classification
 - Engineering health rating
 - AI-style engineering summary
-- Expandable reasoning explanation
+- Expandable technical reasoning
 - Feature importance visualization
-- Pressure vs radius plot
+- Native Streamlit pressure vs radius chart
 - Engineering recommendations
 - Sensitivity analysis
 
 ## Inputs
 
-The user can adjust:
+Users can adjust the following variables from the sidebar:
 
-- Pore radius
-- Contact angle
-- Flow demand
-- Temperature
+| Input | Description |
+|---|---|
+| Pore Radius | Radius of the porous transport pathway |
+| Contact Angle | Wettability of the material surface |
+| Flow Demand | Required hydraulic pressure demand |
+| Temperature | Operating temperature environment |
 
-The temperature range supports values from:
+The temperature range supports:
 
 ```text
 -180 C to +180 C
-Outputs
-The application displays:
-Capillary Pressure
-Stability Score
-Confidence Score
-System Status
-Engineering Health Rating
-AI Engineering Summary
-Feature Importance
-Engineering Recommendations
-Sensitivity Analysis Results
-Physics Model
-The core calculation is based on the Young-Laplace equation:
-Delta P = 2 * gamma * cos(theta) / r
-Where:
-Delta P is capillary pressure
-gamma is surface tension
-theta is contact angle
-r is pore radius
-Smaller pore radius generally increases capillary pressure. Lower contact angle improves wettability and increases the capillary driving force. Higher flow demand makes the system harder to stabilize.
-AI-Style Reasoning
-The app includes an AI-style engineering summary and expandable reasoning section. These explanations are generated locally using Python logic based on the calculated results.
-This version does not require an OpenAI API key.
-Sensitivity Analysis
-The sensitivity analysis feature perturbs each major input and estimates which variable has the strongest influence on the stability score. This helps identify which design parameter should be improved first.
-Tech Stack
-Python
-Streamlit
-NumPy
-Pandas
-Matplotlib
