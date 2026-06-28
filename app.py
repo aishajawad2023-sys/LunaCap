@@ -4,36 +4,34 @@ import pandas as pd
 import streamlit as st
 
 
-# ============================================================
-# Page Config
-# ============================================================
-
 st.set_page_config(
     page_title="LunarCap AI",
-    page_icon="LC",
+    page_icon="🌙",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 
-# ============================================================
-# Styling
-# ============================================================
-
 st.markdown(
     """
     <style>
         :root {
-            --bg: #f4f7fb;
-            --panel: #ffffff;
-            --ink: #172033;
-            --muted: #667085;
-            --line: #d9e2ef;
-            --blue: #2563eb;
-            --cyan: #0891b2;
-            --green: #16833a;
-            --amber: #b76e00;
-            --red: #b42318;
+            --bg: #070b12;
+            --panel: #101722;
+            --panel-soft: #151f2d;
+            --panel-light: #1b2736;
+            --line: rgba(210, 225, 245, 0.14);
+            --text: #f5f7fb;
+            --muted: #9aa8ba;
+            --soft: #cbd5e1;
+            --cyan: #8be9ff;
+            --blue: #8fb7ff;
+            --mint: #a8f0cf;
+            --lime: #d9f99d;
+            --pink: #f7b7d8;
+            --amber: #ffd28a;
+            --red: #ff9f9f;
+            --green: #86efac;
         }
 
         html, body, [class*="css"] {
@@ -41,170 +39,262 @@ st.markdown(
         }
 
         .stApp {
-            background: var(--bg);
-            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(139, 233, 255, 0.13), transparent 34rem),
+                radial-gradient(circle at top right, rgba(247, 183, 216, 0.10), transparent 30rem),
+                linear-gradient(180deg, #070b12 0%, #0a111c 48%, #070b12 100%);
+            color: var(--text);
         }
 
         .block-container {
+            max-width: 1240px;
             padding-top: 2rem;
             padding-bottom: 3rem;
-            max-width: 1240px;
         }
 
         section[data-testid="stSidebar"] {
-            background: #111827;
-            border-right: 1px solid rgba(255,255,255,0.08);
+            background: #060a11;
+            border-right: 1px solid var(--line);
         }
 
         section[data-testid="stSidebar"] * {
-            color: #f9fafb;
+            color: var(--text);
         }
 
         section[data-testid="stSidebar"] .stSlider label {
-            color: #f9fafb !important;
-            font-weight: 650;
+            font-weight: 720;
+            color: var(--text) !important;
         }
 
         section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
-            color: #cbd5e1;
+            color: var(--muted);
+        }
+
+        h1, h2, h3, p, label, span, div {
+            letter-spacing: 0;
         }
 
         .hero {
-            background: linear-gradient(135deg, #ffffff 0%, #eef6ff 58%, #e7fbff 100%);
+            position: relative;
+            overflow: hidden;
             border: 1px solid var(--line);
-            border-radius: 8px;
-            padding: 1.5rem 1.6rem;
-            margin-bottom: 1.1rem;
+            border-radius: 18px;
+            padding: 1.55rem;
+            margin-bottom: 1rem;
+            background:
+                linear-gradient(135deg, rgba(16, 23, 34, 0.96), rgba(19, 32, 48, 0.96)),
+                repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 64px),
+                repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 64px);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+        }
+
+        .hero:after {
+            content: "";
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            right: -110px;
+            top: -140px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(139, 233, 255, 0.26), transparent 65%);
+            pointer-events: none;
+        }
+
+        .hero-grid {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1.35fr 0.85fr;
+            gap: 1.25rem;
+            align-items: center;
         }
 
         .eyebrow {
             font-size: 0.78rem;
-            font-weight: 800;
-            letter-spacing: 0.08em;
             text-transform: uppercase;
+            letter-spacing: 0.11em;
+            font-weight: 850;
             color: var(--cyan);
-            margin-bottom: 0.35rem;
+            margin-bottom: 0.5rem;
         }
 
         .hero-title {
-            font-size: 2.25rem;
-            line-height: 1.05;
-            font-weight: 850;
-            color: var(--ink);
+            font-size: clamp(2rem, 4vw, 3.55rem);
+            line-height: 0.98;
             margin: 0;
+            font-weight: 900;
+            color: var(--text);
         }
 
         .hero-copy {
-            max-width: 760px;
-            margin-top: 0.65rem;
-            font-size: 1rem;
-            line-height: 1.55;
-            color: var(--muted);
+            max-width: 720px;
+            color: var(--soft);
+            font-size: 1.02rem;
+            line-height: 1.62;
+            margin-top: 0.8rem;
         }
 
         .status-pill {
             display: inline-flex;
             align-items: center;
+            gap: 0.45rem;
             border-radius: 999px;
-            padding: 0.36rem 0.72rem;
+            padding: 0.42rem 0.78rem;
+            margin-top: 1rem;
             font-size: 0.82rem;
-            font-weight: 800;
-            margin-top: 0.85rem;
+            font-weight: 850;
             border: 1px solid transparent;
         }
 
         .status-stable {
-            background: #e9f8ef;
-            color: var(--green);
-            border-color: #b9e6c8;
+            color: #052e16;
+            background: linear-gradient(135deg, var(--green), var(--mint));
+            border-color: rgba(168, 240, 207, 0.8);
         }
 
         .status-marginal {
-            background: #fff5df;
-            color: var(--amber);
-            border-color: #f4d18a;
+            color: #3b2500;
+            background: linear-gradient(135deg, var(--amber), #fff0b7);
+            border-color: rgba(255, 210, 138, 0.85);
         }
 
         .status-risk {
-            background: #fff0ed;
-            color: var(--red);
-            border-color: #f2b8b0;
+            color: #450a0a;
+            background: linear-gradient(135deg, var(--red), #ffc4c4);
+            border-color: rgba(255, 159, 159, 0.85);
+        }
+
+        .orbit-card {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 1.1rem;
+            background: rgba(255, 255, 255, 0.055);
+            backdrop-filter: blur(10px);
+        }
+
+        .orbit {
+            height: 210px;
+            border-radius: 16px;
+            position: relative;
+            background:
+                radial-gradient(circle at center, rgba(139, 233, 255, 0.13), transparent 58%),
+                linear-gradient(135deg, rgba(139, 233, 255, 0.08), rgba(247, 183, 216, 0.08));
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .moon {
+            position: absolute;
+            width: 88px;
+            height: 88px;
+            left: calc(50% - 44px);
+            top: calc(50% - 44px);
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 32% 28%, #ffffff, #dce8f7 45%, #9db0c5);
+            box-shadow: 0 0 38px rgba(139, 233, 255, 0.32);
+        }
+
+        .orbit-ring {
+            position: absolute;
+            inset: 36px;
+            border: 1px dashed rgba(203, 213, 225, 0.38);
+            border-radius: 50%;
+        }
+
+        .node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            background: var(--mint);
+            box-shadow: 0 0 18px rgba(168, 240, 207, 0.8);
+        }
+
+        .node.one { left: 20%; top: 36%; }
+        .node.two { right: 23%; top: 28%; background: var(--pink); }
+        .node.three { right: 28%; bottom: 24%; background: var(--cyan); }
+
+        .orbit-caption {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.75rem;
+            color: var(--muted);
+            font-size: 0.8rem;
+            margin-top: 0.85rem;
         }
 
         .metric-card {
-            background: #ffffff;
+            min-height: 128px;
+            border-radius: 16px;
+            padding: 1rem;
             border: 1px solid var(--line);
-            border-radius: 8px;
-            padding: 1rem 1rem 0.95rem;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
-            min-height: 122px;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.085), rgba(255,255,255,0.045));
+            box-shadow: 0 16px 42px rgba(0,0,0,0.22);
         }
 
         .metric-label {
             color: var(--muted);
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             font-weight: 850;
-            letter-spacing: 0.075em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            margin-bottom: 0.42rem;
+            margin-bottom: 0.48rem;
         }
 
         .metric-value {
-            color: var(--ink);
-            font-size: 1.75rem;
-            font-weight: 850;
-            line-height: 1.1;
+            color: var(--text);
+            font-size: 1.8rem;
+            line-height: 1.05;
+            font-weight: 900;
         }
 
         .metric-note {
             color: var(--muted);
             font-size: 0.86rem;
+            line-height: 1.4;
             margin-top: 0.55rem;
-            line-height: 1.35;
         }
 
         .section-title {
-            font-size: 1.15rem;
-            font-weight: 820;
-            color: var(--ink);
+            color: var(--text);
+            font-size: 1.18rem;
+            font-weight: 880;
             margin-bottom: 0.2rem;
         }
 
         .section-kicker {
             color: var(--muted);
             font-size: 0.9rem;
+            line-height: 1.45;
             margin-bottom: 1rem;
         }
 
         .summary-text {
-            font-size: 0.98rem;
-            line-height: 1.68;
-            color: #243044;
+            color: var(--soft);
+            font-size: 0.99rem;
+            line-height: 1.72;
         }
 
-        .recommendation {
-            background: #f0f7ff;
-            border: 1px solid #c8def7;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 0.5rem;
+        div[data-testid="stVerticalBlockBorderWrapper"] {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.078), rgba(255,255,255,0.04));
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: 0 18px 48px rgba(0,0,0,0.22);
         }
 
-        .recommendation ul {
-            margin-bottom: 0.4rem;
-        }
-
-        .small-muted {
-            color: var(--muted);
-            font-size: 0.88rem;
+        div[data-testid="stDataFrame"] {
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         .health-row {
             display: flex;
             justify-content: space-between;
             gap: 1rem;
-            border-bottom: 1px solid #edf1f7;
-            padding: 0.58rem 0;
+            padding: 0.68rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
 
         .health-row:last-child {
@@ -216,25 +306,60 @@ st.markdown(
         }
 
         .health-value {
-            color: var(--ink);
-            font-weight: 760;
+            color: var(--text);
+            font-weight: 820;
             text-align: right;
         }
 
-        div[data-testid="stVerticalBlockBorderWrapper"] {
-            border-color: var(--line);
-            border-radius: 8px;
-            background: #ffffff;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        .rec-box {
+            border: 1px solid rgba(139, 233, 255, 0.25);
+            border-radius: 14px;
+            padding: 1rem;
+            background:
+                linear-gradient(135deg, rgba(139, 233, 255, 0.12), rgba(168, 240, 207, 0.08));
+        }
+
+        .rec-item {
+            color: var(--soft);
+            margin-bottom: 0.52rem;
+            line-height: 1.45;
+        }
+
+        .improvement {
+            margin-top: 0.85rem;
+            color: var(--mint);
+            font-weight: 880;
         }
 
         .stProgress > div > div > div > div {
-            background-color: var(--blue);
+            background: linear-gradient(90deg, var(--cyan), var(--mint));
         }
 
-        button[kind="primary"] {
-            border-radius: 8px;
-            font-weight: 750;
+        .stButton > button {
+            border-radius: 999px;
+            border: 1px solid rgba(139, 233, 255, 0.28);
+            background: linear-gradient(135deg, rgba(139, 233, 255, 0.22), rgba(168, 240, 207, 0.18));
+            color: var(--text);
+            font-weight: 850;
+        }
+
+        .stButton > button:hover {
+            border-color: rgba(139, 233, 255, 0.65);
+            color: white;
+        }
+
+        .stAlert {
+            border-radius: 14px;
+        }
+
+        @media (max-width: 900px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .orbit {
+                height: 170px;
+            }
         }
     </style>
     """,
@@ -242,15 +367,7 @@ st.markdown(
 )
 
 
-# ============================================================
-# Physics Functions
-# ============================================================
-
 def surface_tension_water(temp_c: float) -> float:
-    """
-    Estimate water surface tension in N/m as a function of temperature.
-    This is a simplified engineering approximation for demo use.
-    """
     gamma_20c = 0.0728
     slope = -0.000155
     gamma = gamma_20c + slope * (temp_c - 20.0)
@@ -258,10 +375,6 @@ def surface_tension_water(temp_c: float) -> float:
 
 
 def capillary_pressure(radius_m: float, contact_angle_deg: float, gamma: float) -> float:
-    """
-    Young-Laplace capillary pressure:
-    Delta P = 2 * gamma * cos(theta) / r
-    """
     theta_rad = math.radians(contact_angle_deg)
     return (2.0 * gamma * math.cos(theta_rad)) / radius_m
 
@@ -304,9 +417,13 @@ def health_rating(stability_score: float) -> tuple[str, str]:
     return "High Risk", "2/5"
 
 
-# ============================================================
-# AI Helper Functions
-# ============================================================
+def status_css_class(status: str) -> str:
+    if status == "Stable":
+        return "status-stable"
+    if status == "Marginal":
+        return "status-marginal"
+    return "status-risk"
+
 
 def build_engineering_summary(
     status: str,
@@ -327,18 +444,18 @@ def build_engineering_summary(
         dominant_factor = "large pore radius reducing capillary pressure"
 
     if temp_c > 100:
-        temp_comment = "Elevated temperature reduces surface tension and weakens capillary driving force."
+        temp_comment = "Elevated temperature reduces surface tension and weakens the capillary driving force."
     elif temp_c < -50:
-        temp_comment = "Low temperature increases estimated surface tension, improving capillary pressure in this model."
+        temp_comment = "Low temperature increases estimated surface tension, improving the pressure margin in this model."
     else:
         temp_comment = "Temperature has a secondary influence through its effect on surface tension."
 
     return (
-        f"The predicted transport regime is classified as {status} with a confidence score "
-        f"of {confidence:.0f}%. The calculated capillary pressure is {cap_pressure:,.0f} Pa, "
-        f"compared with a required hydraulic demand of {flow_demand:,.0f} Pa. This gives a "
-        f"pressure margin factor of {pressure_ratio:.2f}. The dominant contributor to this "
-        f"prediction is {dominant_factor}. {temp_comment}"
+        f"The system is classified as {status} with a confidence score of {confidence:.0f}%. "
+        f"The calculated capillary pressure is {cap_pressure:,.0f} Pa against a required "
+        f"hydraulic demand of {flow_demand:,.0f} Pa, producing a pressure margin of "
+        f"{pressure_ratio:.2f}x. The dominant contributor is {dominant_factor}. "
+        f"{temp_comment}"
     )
 
 
@@ -357,9 +474,7 @@ The model uses the Young-Laplace equation:
 
 Delta P = 2 * gamma * cos(theta) / r
 
-Where gamma is surface tension, theta is contact angle, and r is pore radius.
-
-For the current design:
+Current design state:
 
 - Surface tension: {gamma:.4f} N/m
 - Pore radius: {radius_um:.2f} micrometers
@@ -371,11 +486,9 @@ For the current design:
 - Stability score: {stability_score:.1f}/100
 
 A pressure ratio above 1.0 means capillary pressure exceeds hydraulic demand.
-Higher ratios indicate more design margin and therefore stronger transport stability.
-
-The variables with the strongest influence are usually pore radius and flow demand.
-Contact angle controls wettability through the cosine term. Temperature affects the
-result indirectly by changing estimated surface tension.
+Pore radius and flow demand usually dominate the prediction because they directly
+control pressure margin. Contact angle affects wettability through the cosine term,
+while temperature modifies surface tension.
 """
 
 
@@ -392,17 +505,17 @@ def feature_importance(
 
     total = radius_weight + flow_weight + angle_weight + temp_weight
 
-    rows = [
-        ("Radius", radius_weight / total * 100),
-        ("Flow Demand", flow_weight / total * 100),
-        ("Contact Angle", angle_weight / total * 100),
-        ("Temperature", temp_weight / total * 100),
-    ]
-
-    return pd.DataFrame(rows, columns=["Feature", "Importance"]).sort_values(
-        "Importance",
-        ascending=False,
-    )
+    return pd.DataFrame(
+        {
+            "Feature": ["Radius", "Flow Demand", "Contact Angle", "Temperature"],
+            "Importance": [
+                radius_weight / total * 100,
+                flow_weight / total * 100,
+                angle_weight / total * 100,
+                temp_weight / total * 100,
+            ],
+        }
+    ).sort_values("Importance", ascending=False)
 
 
 def recommendation_engine(
@@ -415,23 +528,23 @@ def recommendation_engine(
     improvement = 0.0
 
     if radius_um > 20:
-        recommendations.append("Reduce pore radius by 15%")
+        recommendations.append("Reduce pore radius by 15% to increase capillary pressure.")
         improvement += 12.0
 
     if flow_demand > 1500:
-        recommendations.append("Lower flow demand")
+        recommendations.append("Lower hydraulic flow demand to improve pressure margin.")
         improvement += 9.0
 
     if contact_angle > 45:
-        recommendations.append("Increase wettability")
+        recommendations.append("Increase wettability by reducing contact angle.")
         improvement += 7.0
 
     if stability_score < 60:
-        recommendations.append("Increase capillary margin before operation")
+        recommendations.append("Increase design margin before operation.")
         improvement += 10.0
 
     if not recommendations:
-        recommendations.append("Maintain the current operating window")
+        recommendations.append("Maintain the current operating window.")
         improvement = 3.0
 
     return recommendations, improvement
@@ -448,9 +561,8 @@ def run_sensitivity_analysis(
     baseline_score = calculate_stability_score(baseline_pressure, flow_demand)
 
     rows = []
-    parameters = ["Radius", "Contact Angle", "Flow Demand", "Temperature"]
 
-    for name in parameters:
+    for name in ["Radius", "Contact Angle", "Flow Demand", "Temperature"]:
         low_radius = radius_um
         high_radius = radius_um
         low_angle = contact_angle
@@ -485,27 +597,20 @@ def run_sensitivity_analysis(
         low_score = calculate_stability_score(low_pressure, low_demand)
         high_score = calculate_stability_score(high_pressure, high_demand)
 
-        sensitivity = max(abs(low_score - baseline_score), abs(high_score - baseline_score))
-
         rows.append(
             {
                 "Parameter": name,
                 "Baseline Score": baseline_score,
                 "Low Case Score": low_score,
                 "High Case Score": high_score,
-                "Max Score Change": sensitivity,
+                "Max Score Change": max(
+                    abs(low_score - baseline_score),
+                    abs(high_score - baseline_score),
+                ),
             }
         )
 
     return pd.DataFrame(rows).sort_values("Max Score Change", ascending=False)
-
-
-def status_css_class(status: str) -> str:
-    if status == "Stable":
-        return "status-stable"
-    if status == "Marginal":
-        return "status-marginal"
-    return "status-risk"
 
 
 def render_metric_card(label: str, value: str, note: str) -> None:
@@ -521,11 +626,7 @@ def render_metric_card(label: str, value: str, note: str) -> None:
     )
 
 
-# ============================================================
-# Sidebar
-# ============================================================
-
-st.sidebar.title("LunarCap AI")
+st.sidebar.title("🌙 LunarCap AI")
 st.sidebar.caption("Capillary transport stability predictor")
 st.sidebar.divider()
 
@@ -564,11 +665,6 @@ temperature_c = st.sidebar.slider(
 st.sidebar.divider()
 st.sidebar.caption("Model: Young-Laplace equation with simplified stability scoring.")
 
-
-# ============================================================
-# Calculations
-# ============================================================
-
 radius_m = radius_um * 1e-6
 gamma = surface_tension_water(temperature_c)
 cap_pressure = capillary_pressure(radius_m, contact_angle, gamma)
@@ -596,32 +692,39 @@ recommendations, predicted_improvement = recommendation_engine(
     flow_demand,
 )
 
-
-# ============================================================
-# Header
-# ============================================================
-
 st.markdown(
     f"""
     <div class="hero">
-        <div class="eyebrow">Capillary Transport Analysis</div>
-        <h1 class="hero-title">LunarCap AI</h1>
-        <div class="hero-copy">
-            A clean engineering dashboard for estimating capillary transport stability
-            in porous media used for lunar water recycling concepts.
-        </div>
-        <div class="status-pill {status_css_class(system_status)}">
-            Current System Status: {system_status}
+        <div class="hero-grid">
+            <div>
+                <div class="eyebrow">Lunar Water Recycling Concept</div>
+                <h1 class="hero-title">LunarCap AI</h1>
+                <div class="hero-copy">
+                    A physics-guided engineering dashboard for evaluating capillary
+                    transport stability in porous media under lunar operating conditions.
+                </div>
+                <div class="status-pill {status_css_class(system_status)}">
+                    Current system status: {system_status}
+                </div>
+            </div>
+            <div class="orbit-card">
+                <div class="orbit">
+                    <div class="orbit-ring"></div>
+                    <div class="moon"></div>
+                    <div class="node one"></div>
+                    <div class="node two"></div>
+                    <div class="node three"></div>
+                </div>
+                <div class="orbit-caption">
+                    <span>Porous medium</span>
+                    <span>Capillary transport map</span>
+                </div>
+            </div>
         </div>
     </div>
     """,
     unsafe_allow_html=True,
 )
-
-
-# ============================================================
-# Primary Metrics
-# ============================================================
 
 metric_cols = st.columns(4)
 
@@ -643,7 +746,7 @@ with metric_cols[2]:
     render_metric_card(
         "Pressure Ratio",
         f"{pressure_ratio:.2f}x",
-        "Capillary pressure divided by flow demand",
+        "Available pressure divided by demand",
     )
 
 with metric_cols[3]:
@@ -654,11 +757,6 @@ with metric_cols[3]:
     )
 
 st.write("")
-
-
-# ============================================================
-# Main Analysis
-# ============================================================
 
 left_col, right_col = st.columns([1.45, 1.0], gap="large")
 
@@ -693,23 +791,23 @@ with left_col:
         )
 
         st.caption(
-            f"Current design point: {radius_um:.1f} micrometers, "
+            f"Current design point: {radius_um:.1f} micrometers with "
             f"{cap_pressure:,.0f} Pa capillary pressure."
         )
 
 with right_col:
     with st.container(border=True):
-        st.markdown('<div class="section-title">AI Engineering Summary</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">Engineering Summary</div>', unsafe_allow_html=True)
         st.markdown(
-            '<div class="section-kicker">Plain-language interpretation of the current operating condition.</div>',
+            '<div class="section-kicker">A concise interpretation of the current transport state.</div>',
             unsafe_allow_html=True,
         )
         st.markdown(f'<div class="summary-text">{summary}</div>', unsafe_allow_html=True)
 
     with st.container(border=True):
-        st.markdown('<div class="section-title">Engineering Snapshot</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">System Snapshot</div>', unsafe_allow_html=True)
 
-        rows = [
+        snapshot_rows = [
             ("System Status", system_status),
             ("Health Rating", f"{rating_label} ({rating_score})"),
             ("Surface Tension", f"{gamma:.4f} N/m"),
@@ -717,7 +815,7 @@ with right_col:
             ("Temperature", f"{temperature_c:.1f} C"),
         ]
 
-        for label, value in rows:
+        for label, value in snapshot_rows:
             st.markdown(
                 f"""
                 <div class="health-row">
@@ -728,28 +826,25 @@ with right_col:
                 unsafe_allow_html=True,
             )
 
-
-# ============================================================
-# Decision Support
-# ============================================================
-
 st.write("")
+
 support_left, support_right = st.columns([1.0, 1.0], gap="large")
 
 with support_left:
     with st.container(border=True):
         st.markdown('<div class="section-title">Engineering Recommendation</div>', unsafe_allow_html=True)
         st.markdown(
-            '<div class="section-kicker">Suggested design actions based on the current prediction.</div>',
+            '<div class="section-kicker">Suggested actions based on pressure margin and design sensitivity.</div>',
             unsafe_allow_html=True,
         )
 
-        st.markdown('<div class="recommendation">', unsafe_allow_html=True)
+        st.markdown('<div class="rec-box">', unsafe_allow_html=True)
         for item in recommendations:
-            st.write(f"- {item}")
+            st.markdown(f'<div class="rec-item">• {item}</div>', unsafe_allow_html=True)
 
         st.markdown(
-            f"**Predicted improvement:** +{predicted_improvement:.0f}% stability"
+            f'<div class="improvement">Predicted improvement: +{predicted_improvement:.0f}% stability</div>',
+            unsafe_allow_html=True,
         )
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -757,7 +852,7 @@ with support_right:
     with st.container(border=True):
         st.markdown('<div class="section-title">Feature Importance</div>', unsafe_allow_html=True)
         st.markdown(
-            '<div class="section-kicker">Estimated contribution of each input to the prediction.</div>',
+            '<div class="section-kicker">Estimated contribution of each input to the current prediction.</div>',
             unsafe_allow_html=True,
         )
 
@@ -774,12 +869,8 @@ with support_right:
             st.progress(importance / 100)
             st.caption(f"{importance:.0f}% contribution")
 
-
-# ============================================================
-# Operating Conditions
-# ============================================================
-
 st.write("")
+
 with st.container(border=True):
     st.markdown('<div class="section-title">Operating Conditions</div>', unsafe_allow_html=True)
     st.markdown(
@@ -814,18 +905,10 @@ with st.container(border=True):
         }
     )
 
-    st.dataframe(
-        operating_df,
-        hide_index=True,
-        use_container_width=True,
-    )
-
-
-# ============================================================
-# Sensitivity Analysis
-# ============================================================
+    st.dataframe(operating_df, hide_index=True, use_container_width=True)
 
 st.write("")
+
 with st.container(border=True):
     st.markdown('<div class="section-title">Sensitivity Analysis</div>', unsafe_allow_html=True)
     st.markdown(
@@ -833,7 +916,7 @@ with st.container(border=True):
         unsafe_allow_html=True,
     )
 
-    run_analysis = st.button("Run Sensitivity Analysis", type="primary")
+    run_analysis = st.button("Run Sensitivity Analysis")
 
     if run_analysis:
         sensitivity_df = run_sensitivity_analysis(
@@ -866,14 +949,10 @@ with st.container(border=True):
     else:
         st.caption("Click the button to test how much each input affects the stability score.")
 
-
-# ============================================================
-# Technical Reasoning
-# ============================================================
-
 st.write("")
+
 with st.container(border=True):
-    with st.expander("Technical AI Reasoning"):
+    with st.expander("Technical Reasoning"):
         st.write(
             build_ai_reasoning(
                 cap_pressure,
@@ -886,11 +965,6 @@ with st.container(border=True):
                 temperature_c,
             )
         )
-
-
-# ============================================================
-# Footer
-# ============================================================
 
 st.caption(
     "LunarCap AI uses simplified engineering equations for educational demonstration "
